@@ -41,7 +41,26 @@ function displayFormData(context, toggleState) {
 }
 
 // ========================================
+// EDGEML CONFIGURATION
+// ========================================
+
+// EdgeML connection settings
+const EDGEML_CONFIG = {
+    backendUrl: 'https://beta.edgeml.org',     // EdgeML server
+    deviceApiKey: '5fe6e50c3fb5001531bbd8e03a8c591f',  // Your write key
+    username: 'css25',                         // Username
+    password: 'css25'                          // Password
+};
+
+// Variable to hold the EdgeML data collector
+let edgeMLCollector = null;
+
+// ========================================
 // DEVICE ORIENTATION FEATURE
+// Measures device tilt/rotation (like a compass)
+// Returns angles: alpha (compass), beta (front-to-back), gamma (left-to-right)
+// Easier to test in Chrome DevTools (can be simulated)
+// Good for: detecting how phone is tilted
 // ========================================
 
 // Get orientation display elements
@@ -71,18 +90,78 @@ function handleOrientation(event) {
     
     // Log to console for debugging
     console.log('Orientation:', { alpha, beta, gamma });
+    
+    // ========================================
+    // Send data to EdgeML if collector is active
+    // ========================================
+    if (edgeMLCollector) {
+        try {
+            // Get current timestamp in milliseconds
+            const timestamp = Date.now();
+            
+            // Send each orientation value as a separate data point
+            // Format: addDataPoint(timestamp, sensorName, value)
+            edgeMLCollector.addDataPoint(timestamp, 'alpha', parseFloat(alpha));
+            edgeMLCollector.addDataPoint(timestamp, 'beta', parseFloat(beta));
+            edgeMLCollector.addDataPoint(timestamp, 'gamma', parseFloat(gamma));
+            
+            console.log('✓ Data sent to EdgeML');
+        } catch (error) {
+            console.error('✗ Error sending data to EdgeML:', error);
+        }
+    }
 }
 
 // Function to start listening to device orientation
-function startOrientationTracking() {
+async function startOrientationTracking() {
     // Check if the browser supports DeviceOrientationEvent
     if (window.DeviceOrientationEvent) {
-        // Add the event listener
+        try {
+            // ========================================
+            // Initialize EdgeML Data Collector
+            // ========================================
+            
+            // Get context value for dataset name
+            const contextValue = contextInput.value || 'no-context';
+            const datasetName = `orientation_${contextValue}_${Date.now()}`;
+            
+            console.log('📡 Connecting to EdgeML...');
+            
+            // Create the data collector
+            // Parameters:
+            // 1. Backend URL
+            // 2. API Key (write key)
+            // 3. Dataset name (unique identifier)
+            // 4. Use custom timestamps (false = we provide timestamps)
+            // 5. Time-series names (what we're measuring)
+            // 6. Metadata (optional info about the dataset)
+            edgeMLCollector = await edgeML.datasetCollector(
+                EDGEML_CONFIG.backendUrl,
+                EDGEML_CONFIG.deviceApiKey,
+                datasetName,
+                false,  // We'll provide our own timestamps
+                ['alpha', 'beta', 'gamma'],  // Time-series (sensor names)
+                {
+                    context: contextValue,
+                    device: 'web-browser',
+                    startTime: new Date().toISOString()
+                }  // Metadata
+            );
+            
+            console.log('✓ Connected to EdgeML!');
+            console.log('📊 Dataset name:', datasetName);
+            
+        } catch (error) {
+            console.error('✗ Failed to connect to EdgeML:', error);
+            alert('Failed to connect to EdgeML. Check console for details.');
+        }
+        
+        // Add the event listener for device orientation
         window.addEventListener('deviceorientation', handleOrientation);
         isOrientationActive = true;
         
         // Update status
-        orientationStatus.textContent = 'Active ✓';
+        orientationStatus.textContent = 'Active ✓ (EdgeML Connected)';
         orientationStatus.className = 'active';
         
         console.log('✓ Device orientation tracking started');
@@ -96,10 +175,30 @@ function startOrientationTracking() {
 }
 
 // Function to stop listening to device orientation
-function stopOrientationTracking() {
+async function stopOrientationTracking() {
     // Remove the event listener
     window.removeEventListener('deviceorientation', handleOrientation);
     isOrientationActive = false;
+    
+    // ========================================
+    // Close EdgeML connection and upload remaining data
+    // ========================================
+    if (edgeMLCollector) {
+        try {
+            console.log('📡 Uploading remaining data to EdgeML...');
+            
+            // Tell EdgeML we're done - this uploads all buffered data
+            await edgeMLCollector.onComplete();
+            
+            console.log('✓ All data uploaded to EdgeML successfully!');
+            console.log('🔗 View your data at: ' + EDGEML_CONFIG.backendUrl);
+            
+            // Clear the collector
+            edgeMLCollector = null;
+        } catch (error) {
+            console.error('✗ Error completing EdgeML upload:', error);
+        }
+    }
     
     // Reset displays
     alphaDisplay.textContent = '--';
@@ -107,7 +206,7 @@ function stopOrientationTracking() {
     gammaDisplay.textContent = '--';
     
     // Update status
-    orientationStatus.textContent = 'Stopped';
+    orientationStatus.textContent = 'Stopped (Data uploaded)';
     orientationStatus.className = '';
     
     console.log('✓ Device orientation tracking stopped');

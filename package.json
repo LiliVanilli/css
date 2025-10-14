@@ -1,0 +1,28 @@
+{
+  "name": "device-orientation-form",
+  "version": "1.0.0",
+  "description": "Web form with device orientation tracking and EdgeML integration",
+  "main": "script.js",
+  "scripts": {
+    "start": "npx http-server -p 8080",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "device-orientation",
+    "edge-ml",
+    "sensors",
+    "form",
+    "data-collection"
+  ],
+  "author": "LiliVanilli",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LiliVanilli/css.git"
+  },
+  "homepage": "https://lilivanilli.github.io/css/",
+  "dependencies": {
+    "edge-ml": "^4.0.1"
+  },
+  "devDependencies": {}
+}
