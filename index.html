@@ -1,0 +1,39 @@
+ <!-- Purpose: Defines the structure of your webpage -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form with Toggle Switch</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>My Form</h1>
+        <form id="myForm">
+            <!-- Text Field for Context -->
+            <div class="form-group">
+                <label for="context">Context:</label>
+                <input type="text" id="context" name="context" placeholder="Enter context here...">
+            </div>
+
+            <!-- Toggle Switch -->
+            <div class="form-group">
+                <label for="toggleSwitch">Toggle Option:</label>
+                <label class="switch">
+                    <input type="checkbox" id="toggleSwitch" name="toggleSwitch">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit">Submit</button>
+        </form>
+
+        <!-- Display Area for Form Data -->
+        <div id="output" class="output"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
