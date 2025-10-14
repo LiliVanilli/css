@@ -30,6 +30,13 @@ yarn-error.log*
 dist/
 build/
 
+# Generated files
+plots/
+*.csv
+*.png
+*.jpg
+*.jpeg
+
 # Temporary files
 *.tmp
 *.temp
