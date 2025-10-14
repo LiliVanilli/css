@@ -2,10 +2,10 @@
 
 Dieses Projekt sammelt und analysiert Sensor-Daten von mobilen Geräten.
 
-## 📊 Daten sammeln
+## Daten sammeln
 
-### Option 1: Lokale Datensammlung (empfohlen)
-Da der EdgeML-Server nicht verfügbar ist, verwende den lokalen Modus:
+### Option 1: Lokale Datensammlung
+Lokalen Modus:
 
 1. Öffne https://lilivanilli.github.io/css/
 2. Wähle **"Local Storage"** im Dropdown
@@ -15,13 +15,13 @@ Da der EdgeML-Server nicht verfügbar ist, verwende den lokalen Modus:
 6. Deaktiviere den Toggle
 7. Klicke **"Export CSV"** um die Daten herunterzuladen
 
-### Option 2: EdgeML Cloud (aktuell nicht verfügbar)
+### Option 2: EdgeML Cloud
 - Server: app.edge-ml.org
 - Status: SSL-Zertifikat abgelaufen (3. Juni 2025)
 - Write Key: 5fe6e50c3fb5001531bbd8e03a8c591f
 - Read Key: 02a4fad735d3308b68672ddb7593f047
 
-## 📈 Daten analysieren
+## Daten analysieren
 
 ### Python-Analyse installieren
 
@@ -48,7 +48,7 @@ Das Script erstellt:
   - `gyroscope_*.png` - X, Y, Z Rotation
   - `magnitude_*.png` - Gesamtbeschleunigung
 
-## 📱 Mobile Testing
+## Mobile Testing
 
 ### Debug-Seite für iOS/Android
 https://lilivanilli.github.io/css/mobile-debug.html
@@ -59,7 +59,7 @@ Diese Seite zeigt:
 - ✓ Live-Sensor-Werte
 - ✓ Detailliertes Event-Logging
 
-## 📁 Dateistruktur
+## Dateistruktur
 
 ```
 .
@@ -72,18 +72,18 @@ Diese Seite zeigt:
 └── requirements.txt       # Python Dependencies
 ```
 
-## 🔧 Features
+## Features
 
-- ✅ Device Orientation (Alpha, Beta, Gamma)
-- ✅ Accelerometer (X, Y, Z)
-- ✅ Gyroscope (X, Y, Z)
-- ✅ Lokale Datenspeicherung
-- ✅ CSV Export
-- ✅ EdgeML Cloud Integration (wenn Server verfügbar)
-- ✅ iOS 13+ Permission Handling
-- ✅ HTTPS via GitHub Pages
+- Device Orientation (Alpha, Beta, Gamma)
+- Accelerometer (X, Y, Z)
+- Gyroscope (X, Y, Z)
+- Lokale Datenspeicherung
+- CSV Export
+- EdgeML Cloud Integration (wenn Server verfügbar)
+- iOS 13+ Permission Handling
+- HTTPS via GitHub Pages
 
-## 🎯 Verwendungszweck
+## Verwendungszweck
 
 Dieses Projekt wurde für das Sammeln von Sensor-Daten erstellt, um verschiedene Aktivitäten zu erkennen:
 - Gehen (walking)
