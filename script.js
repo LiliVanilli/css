@@ -57,7 +57,8 @@ function displayFormData(context, toggleState) {
 
 // EdgeML connection settings
 const EDGEML_CONFIG = {
-    backendUrl: 'https://beta.edgeml.org',     // EdgeML server
+    backendUrl: 'https://app.edge-ml.org',     // EdgeML server
+    // NOTE: SSL certificate expired June 3, 2025 - this is an EdgeML server issue, not our code
     deviceApiKey: '5fe6e50c3fb5001531bbd8e03a8c591f',  // Your write key
     username: 'css25',                         // Username
     password: 'css25'                          // Password
