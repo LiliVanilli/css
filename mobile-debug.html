@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Sensor Debug</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #000;
+            color: #0f0;
+            font-size: 14px;
+        }
+        .log {
+            margin: 5px 0;
+            padding: 5px;
+            background: #111;
+            border-left: 3px solid #0f0;
+        }
+        .error {
+            color: #f00;
+            border-left-color: #f00;
+        }
+        .warning {
+            color: #ff0;
+            border-left-color: #ff0;
+        }
+        button {
+            background: #0f0;
+            color: #000;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 5px;
+            margin: 10px 5px;
+            width: 100%;
+        }
+        #data {
+            margin-top: 20px;
+            font-size: 18px;
+            line-height: 1.8;
+        }
+        .value {
+            color: #0ff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>📱 Mobile Sensor Debug</h1>
+    <button id="startBtn">START SENSORS</button>
+    <button id="clearBtn" style="background: #f00; color: #fff;">CLEAR LOG</button>
+    
+    <div id="data">
+        <div>Alpha: <span class="value" id="alpha">--</span></div>
+        <div>Beta: <span class="value" id="beta">--</span></div>
+        <div>Gamma: <span class="value" id="gamma">--</span></div>
+        <div>Accel X: <span class="value" id="accelX">--</span></div>
+        <div>Accel Y: <span class="value" id="accelY">--</span></div>
+        <div>Accel Z: <span class="value" id="accelZ">--</span></div>
+        <div>Events: <span class="value" id="count">0</span></div>
+    </div>
+    
+    <h2>Log:</h2>
+    <div id="log"></div>
+
+    <script>
+        const logDiv = document.getElementById('log');
+        const startBtn = document.getElementById('startBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        let eventCount = 0;
+        let isActive = false;
+        
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = `log ${type}`;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.insertBefore(div, logDiv.firstChild);
+            console.log(message);
+            
+            // Keep only last 50 logs
+            while (logDiv.children.length > 50) {
+                logDiv.removeChild(logDiv.lastChild);
+            }
+        }
+        
+        function handleOrientation(event) {
+            if (!isActive) return;
+            
+            eventCount++;
+            document.getElementById('count').textContent = eventCount;
+            document.getElementById('alpha').textContent = event.alpha?.toFixed(2) || 'null';
+            document.getElementById('beta').textContent = event.beta?.toFixed(2) || 'null';
+            document.getElementById('gamma').textContent = event.gamma?.toFixed(2) || 'null';
+            
+            if (eventCount === 1) {
+                log('✓ Orientation events working!', 'info');
+            }
+        }
+        
+        function handleMotion(event) {
+            if (!isActive) return;
+            
+            if (event.acceleration) {
+                document.getElementById('accelX').textContent = event.acceleration.x?.toFixed(2) || 'null';
+                document.getElementById('accelY').textContent = event.acceleration.y?.toFixed(2) || 'null';
+                document.getElementById('accelZ').textContent = event.acceleration.z?.toFixed(2) || 'null';
+                
+                if (eventCount === 1) {
+                    log('✓ Motion events working!', 'info');
+                }
+            }
+        }
+        
+        async function start() {
+            log('=== STARTING SENSOR TEST ===', 'info');
+            log('User Agent: ' + navigator.userAgent, 'info');
+            
+            // Check API support
+            if (!window.DeviceOrientationEvent) {
+                log('✗ DeviceOrientationEvent NOT supported', 'error');
+                alert('Your browser does not support DeviceOrientation');
+                return;
+            }
+            log('✓ DeviceOrientationEvent supported', 'info');
+            
+            if (!window.DeviceMotionEvent) {
+                log('✗ DeviceMotionEvent NOT supported', 'error');
+            } else {
+                log('✓ DeviceMotionEvent supported', 'info');
+            }
+            
+            // Check for iOS permission API
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                log('iOS detected - requesting orientation permission...', 'warning');
+                try {
+                    const permission = await DeviceOrientationEvent.requestPermission();
+                    log(`Orientation permission: ${permission}`, permission === 'granted' ? 'info' : 'error');
+                    
+                    if (permission !== 'granted') {
+                        alert('Permission denied! Please allow sensor access in Settings.');
+                        return;
+                    }
+                } catch (error) {
+                    log(`Error requesting orientation permission: ${error.message}`, 'error');
+                    return;
+                }
+            } else {
+                log('No permission required (not iOS 13+)', 'info');
+            }
+            
+            if (typeof DeviceMotionEvent.requestPermission === 'function') {
+                log('iOS detected - requesting motion permission...', 'warning');
+                try {
+                    const permission = await DeviceMotionEvent.requestPermission();
+                    log(`Motion permission: ${permission}`, permission === 'granted' ? 'info' : 'error');
+                    
+                    if (permission !== 'granted') {
+                        alert('Motion permission denied!');
+                        return;
+                    }
+                } catch (error) {
+                    log(`Error requesting motion permission: ${error.message}`, 'error');
+                }
+            }
+            
+            // Add event listeners
+            log('Adding event listeners...', 'info');
+            window.addEventListener('deviceorientation', handleOrientation, true);
+            window.addEventListener('devicemotion', handleMotion, true);
+            isActive = true;
+            
+            log('✓ Listeners added. Move your device!', 'info');
+            log('Waiting for events...', 'warning');
+            
+            startBtn.textContent = 'SENSORS ACTIVE';
+            startBtn.style.background = '#ff0';
+            
+            // Test if events fire within 5 seconds
+            setTimeout(() => {
+                if (eventCount === 0) {
+                    log('✗ NO EVENTS RECEIVED after 5 seconds!', 'error');
+                    log('Possible causes:', 'warning');
+                    log('1. Sensors blocked by browser', 'warning');
+                    log('2. HTTPS required', 'warning');
+                    log('3. Sensors not available on device', 'warning');
+                }
+            }, 5000);
+        }
+        
+        startBtn.addEventListener('click', start);
+        clearBtn.addEventListener('click', () => {
+            logDiv.innerHTML = '';
+            eventCount = 0;
+            document.getElementById('count').textContent = '0';
+            log('Log cleared', 'info');
+        });
+        
+        log('Debug page loaded. Click START SENSORS button.', 'info');
+    </script>
+</body>
+</html>
