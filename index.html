@@ -17,6 +17,15 @@
                 <input type="text" id="context" name="context" placeholder="Enter context here...">
             </div>
 
+            <!-- Storage Mode Selection -->
+            <div class="form-group">
+                <label for="storageMode">Data Storage:</label>
+                <select id="storageMode" name="storageMode">
+                    <option value="local">Local Storage (CSV Export)</option>
+                    <option value="edgeml">EdgeML Cloud</option>
+                </select>
+            </div>
+
             <!-- Toggle Switch -->
             <div class="form-group">
                 <label for="toggleSwitch">Toggle Option:</label>
@@ -28,6 +37,10 @@
 
             <!-- Submit Button -->
             <button type="submit">Submit</button>
+            
+            <!-- Export Button (only visible when data is collected) -->
+            <button type="button" id="exportBtn" style="display: none; background: #2196F3; margin-left: 10px;">Export CSV</button>
+            <button type="button" id="clearBtn" style="display: none; background: #f44336; margin-left: 10px;">Clear Data</button>
         </form>
 
         <!-- Display Area for Form Data -->
@@ -35,12 +48,23 @@
 
         <!-- Display Area for Device Orientation -->
         <div id="orientation-output" class="orientation-output">
-            <h3>📱 Device Orientation</h3>
+            <h3>📱 Device Sensors</h3>
             <p class="status">Status: <span id="orientation-status">Toggle ON to start</span></p>
+            <p class="status">Storage Mode: <span id="storage-mode-display">Local Storage</span></p>
+            <p class="status">Data Points: <span id="data-count">0</span></p>
             <div class="orientation-data">
+                <p><strong>Orientation:</strong></p>
                 <p>Alpha (Z-axis): <span id="alpha">--</span>°</p>
                 <p>Beta (X-axis): <span id="beta">--</span>°</p>
                 <p>Gamma (Y-axis): <span id="gamma">--</span>°</p>
+                <p><strong>Accelerometer:</strong></p>
+                <p>X: <span id="accel-x">--</span> m/s²</p>
+                <p>Y: <span id="accel-y">--</span> m/s²</p>
+                <p>Z: <span id="accel-z">--</span> m/s²</p>
+                <p><strong>Gyroscope:</strong></p>
+                <p>X: <span id="gyro-x">--</span> °/s</p>
+                <p>Y: <span id="gyro-y">--</span> °/s</p>
+                <p>Z: <span id="gyro-z">--</span> °/s</p>
             </div>
         </div>
     </div>

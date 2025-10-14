@@ -44,8 +44,9 @@ h1 {
     font-weight: bold;
 }
 
-/* Text Input Styling */
-input[type="text"] {
+/* Text Input and Select Styling */
+input[type="text"],
+select {
     width: 100%;
     padding: 12px;
     border: 2px solid #ddd;
