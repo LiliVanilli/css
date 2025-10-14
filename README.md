@@ -1,22 +1,26 @@
-# Form with Device Orientation Tracking & EdgeML Integration
+# Device Sensor Data Collection Web Application
 
-A web application that collects device orientation data and sends it to EdgeML platform for analysis.
+A web application that collects device sensor data including orientation, accelerometer, and gyroscope measurements with support for both local storage and cloud-based data collection.
 
-## 🌟 Features
+## Features
 
-- **Form Input**: Text field for context and toggle switch
-- **Device Orientation Tracking**: Real-time alpha, beta, gamma measurements
-- **EdgeML Integration**: Automatic data upload to beta.edgeml.org
-- **Responsive Design**: Beautiful gradient UI that works on all devices
+- **Form Input**: Text field for context and toggle switch for data collection
+- **Multi-Sensor Tracking**: Real-time data from orientation, accelerometer, and gyroscope sensors
+- **Dual Storage Mode**: Choose between local storage with CSV export or EdgeML cloud integration
+- **Data Export**: Download collected data as CSV files for offline analysis
+- **Python Analysis Tools**: Included scripts for statistical analysis and visualization
+- **Mobile Optimized**: Full iOS and Android support with permission handling
+- **Responsive Design**: Clean gradient UI that works on all devices
+- **HTTPS Deployment**: Secure hosting via GitHub Pages
 
-## 📋 Prerequisites
+## Prerequisites
 
 - Node.js (v14 or higher)
 - NPM (comes with Node.js)
 - A modern web browser (Chrome, Firefox, Safari, Edge)
 - Internet connection for EdgeML data upload
 
-## 🚀 Installation
+## Installation
 
 ### 1. Clone the repository
 
@@ -43,7 +47,7 @@ You can open the webpage in several ways:
 open index.html
 ```
 
-**Option B: Using a local server (recommended for development)**
+**Option B: Using a local server**
 ```bash
 # Install a simple HTTP server globally (only needed once)
 npm install -g http-server
@@ -57,24 +61,33 @@ http-server
 **Option C: Live on GitHub Pages**
 Visit: https://lilivanilli.github.io/css/
 
-## 🔧 Configuration
 
-The EdgeML connection is configured with the following credentials:
-- **Server**: beta.edgeml.org
-- **Username**: css25
-- **Password**: css25
-- **Write Key**: `5fe6e50c3fb5001531bbd8e03a8c591f`
+## How to Use
 
-These are hardcoded in `script.js` for the demo. For production, consider using environment variables.
+### Web Interface
 
-## 📱 How to Use
+1. **Open the webpage** at https://lilivanilli.github.io/css/
+2. **Select storage mode**: Choose between "Local Storage" or "EdgeML Cloud"
+3. **Enter context** in the text field (e.g., "walking", "sitting", "running")
+4. **Toggle the switch ON** to start sensor data collection
+5. **Move your device** - tilt, rotate, walk around
+6. **Watch real-time data** showing all sensor values:
+   - Orientation: Alpha, Beta, Gamma
+   - Accelerometer: X, Y, Z acceleration
+   - Gyroscope: X, Y, Z rotation rates
+7. **Toggle OFF** to stop collection
+8. **Export CSV** (local mode only) to download your data
 
-1. **Open the webpage** in your browser
-2. **Enter context** in the text field (optional)
-3. **Toggle the switch ON** to start device orientation tracking
-4. **Tilt your device** (or use Chrome DevTools Sensors to simulate)
-5. **Watch the real-time data** display alpha, beta, gamma values
-6. **Submit the form** to see your input summary
+### Mobile Testing
+
+For detailed sensor debugging on mobile devices, visit:
+https://lilivanilli.github.io/css/mobile-debug.html
+
+This page provides:
+- Sensor API support detection
+- Permission status monitoring
+- Live event logging
+- Troubleshooting information
 
 ### Testing in Chrome DevTools
 
@@ -84,68 +97,165 @@ These are hardcoded in `script.js` for the demo. For production, consider using 
 4. Toggle your switch ON and manipulate the 3D phone model
 5. Watch the values update in real-time!
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 css/
-├── index.html          # Main HTML structure
-├── styles.css          # All styling and animations
-├── script.js           # JavaScript logic and EdgeML integration
-├── package.json        # NPM dependencies and project info
-├── package-lock.json   # Locked versions of dependencies
-├── node_modules/       # Installed NPM packages (auto-generated)
-└── README.md          # This file
+├── index.html              # Main HTML structure with sensor display
+├── mobile-debug.html       # Mobile sensor debugging interface
+├── styles.css              # All styling and animations
+├── script.js               # JavaScript logic and sensor handling
+├── edge-ml.js             # EdgeML library (local copy)
+├── analyze_sensors.py      # Python data analysis script
+├── test_data.csv          # Sample sensor data for testing
+├── requirements.txt        # Python dependencies
+├── ANALYSIS.md            # Data analysis documentation
+├── package.json           # NPM dependencies and project info
+├── package-lock.json      # Locked versions of dependencies
+├── node_modules/          # Installed NPM packages (auto-generated)
+└── README.md             # This file
 ```
 
-## 🔐 HTTPS Deployment
+## HTTPS Deployment
 
 This project is deployed on GitHub Pages with automatic HTTPS:
 - URL: https://lilivanilli.github.io/css/
 - Certificate: Automatically provided by GitHub (Let's Encrypt)
 
-## 📚 Technologies Used
+## Technologies Used
 
+### Frontend
 - **HTML5**: Structure and semantic markup
 - **CSS3**: Styling, gradients, animations
-- **JavaScript (ES6+)**: Device APIs and data handling
-- **EdgeML**: Data collection and analysis platform
-- **GitHub Pages**: Free HTTPS hosting
+- **JavaScript (ES6+)**: Device APIs and sensor event handling
+- **Device Orientation API**: Compass and tilt measurements
+- **Device Motion API**: Accelerometer and gyroscope data
+- **EdgeML Library**: Optional cloud data collection
 
-## 🔍 Device Orientation Explained
+### Backend & Analysis
+- **Python 3**: Data analysis and visualization
+- **Pandas**: Data manipulation and statistics
+- **Matplotlib**: Plot generation
+- **NumPy**: Mathematical operations
 
-- **Alpha (Z-axis)**: Compass direction (0° to 360°)
-  - 0° = North, 90° = East, 180° = South, 270° = West
-  
-- **Beta (X-axis)**: Front-to-back tilt (-180° to 180°)
-  - 0° = Flat, 90° = Standing up, -90° = Upside down
-  
-- **Gamma (Y-axis)**: Left-to-right tilt (-90° to 90°)
-  - 0° = Flat, 90° = Tilted right, -90° = Tilted left
+### Deployment
+- **GitHub Pages**: HTTPS hosting with automatic SSL
+- **Git**: Version control
 
-## 🐛 Troubleshooting
+## Sensor Data Explained
 
-**Device orientation not working?**
-- Ensure you're using HTTPS (required for sensor access)
-- Check browser console for errors
-- On iOS, you may need to grant permission for motion sensors
+### Device Orientation
+
+Measures the device's rotation in 3D space:
+
+- **Alpha (Z-axis)**: Compass direction (0 to 360 degrees)
+  - 0 = North
+  - 90 = East
+  - 180 = South
+  - 270 = West
+
+- **Beta (X-axis)**: Front-to-back tilt (-180 to 180 degrees)
+  - 0 = Flat on surface
+  - 90 = Standing upright (screen facing you)
+  - -90 = Upside down
+
+- **Gamma (Y-axis)**: Left-to-right tilt (-90 to 90 degrees)
+  - 0 = Flat on surface
+  - 90 = Tilted to the right
+  - -90 = Tilted to the left
+
+### Accelerometer
+
+Measures linear acceleration along each axis (m/s²):
+
+- **X-axis**: Side-to-side movement
+  - Positive = Acceleration to the right
+  - Negative = Acceleration to the left
+
+- **Y-axis**: Forward-backward movement
+  - Positive = Acceleration forward
+  - Negative = Acceleration backward
+
+- **Z-axis**: Up-down movement
+  - Positive = Acceleration upward
+  - Negative = Acceleration downward
+  - At rest: approximately 9.81 m/s² (gravity)
+
+### Gyroscope
+
+Measures rotation rate around each axis (degrees/second):
+
+- **X-axis (Alpha)**: Rotation around the X-axis
+  - Rolling motion (tilting screen forward/backward)
+
+- **Y-axis (Beta)**: Rotation around the Y-axis
+  - Pitching motion (tilting screen left/right)
+
+- **Z-axis (Gamma)**: Rotation around the Z-axis
+  - Yawing motion (spinning like a compass)
+
+## Data Analysis
+
+### Using Python Analysis Script
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Analyze your collected data
+python analyze_sensors.py your_sensor_data.csv
+
+# Test with sample data
+python analyze_sensors.py test_data.csv
+```
+
+The analysis script generates:
+- Statistical summaries (mean, std, min, max)
+- Time-series plots for each sensor
+- Magnitude plots for accelerometer data
+- All plots saved to `plots/` directory
+
+See `ANALYSIS.md` for detailed documentation.
+
+## Troubleshooting
+
+**Sensors not working on mobile?**
+- HTTPS is required for sensor access (automatically provided by GitHub Pages)
+- On iOS 13+, you must grant permission when prompted
+- Check if your browser supports the sensor APIs
+- Use the mobile debug page for detailed diagnostics
+
+**No data being collected?**
+- Ensure the toggle switch is ON
+- Check browser console for error messages
+- Verify sensor permissions are granted
+- Try the mobile-debug.html page to test sensor availability
+
+**CSV export not working?**
+- Make sure you're using "Local Storage" mode
+- Collect some data before clicking export
+- Check if pop-up blockers are interfering
+
+**Python analysis fails?**
+- Verify Python 3 is installed: `python3 --version`
+- Install dependencies: `pip install -r requirements.txt`
+- Check CSV file format matches expected structure
+- Ensure pandas, matplotlib, and numpy are installed
 
 **npm install fails?**
-- Check your Node.js version: `node --version`
+- Check Node.js version: `node --version` (need v14+)
 - Clear npm cache: `npm cache clean --force`
-- Delete `node_modules` and try again
+- Delete `node_modules` and `package-lock.json`, then retry
 
 **Page not updating on GitHub Pages?**
 - Wait 1-2 minutes after pushing changes
-- Clear browser cache or use incognito mode
+- Clear browser cache (Cmd+Shift+R on Mac, Ctrl+Shift+R on Windows)
+- Try incognito/private browsing mode
 
-## 📄 License
+## License
 
-MIT License - Feel free to use this project for learning or personal projects.
+MIT License
 
-## 👤 Author
+## Author
 
 LiliVanilli
-
-## 🤝 Contributing
-
-Feel free to fork this project and submit pull requests!
