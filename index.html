@@ -6,8 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Form with Toggle Switch</title>
     <link rel="stylesheet" href="styles.css">
-    <!-- EdgeML Library from CDN -->
-    <script src="https://unpkg.com/edge-ml/dist/bundle.js"></script>
 </head>
 <body>
     <div class="container">
@@ -47,6 +45,8 @@
         </div>
     </div>
 
+    <!-- Load EdgeML library BEFORE our script -->
+    <script src="https://unpkg.com/edge-ml@4.0.1/dist/bundle.js"></script>
     <script src="script.js"></script>
 </body>
 </html>

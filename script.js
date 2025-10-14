@@ -1,3 +1,14 @@
+// ========================================
+// WAIT FOR EDGEML LIBRARY TO LOAD
+// ========================================
+console.log('🔍 Checking EdgeML library...');
+if (typeof edgeML !== 'undefined') {
+    console.log('✅ EdgeML library is available');
+    console.log('EdgeML object:', edgeML);
+} else {
+    console.warn('⚠️ EdgeML library not yet loaded. It should load from CDN.');
+}
+
 // Get form and output elements
 // Purpose: Makes the form interactive
 const form = document.getElementById('myForm');
