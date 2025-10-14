@@ -1,12 +1,12 @@
 // ========================================
 // WAIT FOR EDGEML LIBRARY TO LOAD
 // ========================================
-console.log('🔍 Checking EdgeML library...');
+console.log('Checking EdgeML library...');
 if (typeof edgeML !== 'undefined') {
-    console.log('✅ EdgeML library is available');
+    console.log('EdgeML library is available');
     console.log('EdgeML object:', edgeML);
 } else {
-    console.warn('⚠️ EdgeML library not yet loaded. It should load from CDN.');
+    console.warn('EdgeML library not yet loaded. It should load from CDN.');
 }
 
 // Get form and output elements
@@ -84,6 +84,11 @@ const gammaDisplay = document.getElementById('gamma');
 // Variable to track if orientation listening is active
 let isOrientationActive = false;
 
+// Variables for additional sensors
+let accelerometerData = { x: 0, y: 0, z: 0 };
+let gyroscopeData = { x: 0, y: 0, z: 0 };
+let dataPointCounter = 0;
+
 // The actual event handler function that processes orientation data
 function handleOrientation(event) {
     // event.alpha: rotation around z-axis (0-360 degrees) - like a compass
@@ -117,10 +122,46 @@ function handleOrientation(event) {
             edgeMLCollector.addDataPoint(timestamp, 'beta', parseFloat(beta));
             edgeMLCollector.addDataPoint(timestamp, 'gamma', parseFloat(gamma));
             
-            console.log('✓ Data sent to EdgeML');
+            dataPointCounter++;
+            if (dataPointCounter % 50 === 0) {
+                console.log('Data sent to EdgeML - ' + dataPointCounter + ' points collected');
+            }
         } catch (error) {
-            console.error('✗ Error sending data to EdgeML:', error);
+            console.error('Error sending data to EdgeML:', error);
         }
+    }
+}
+
+// Handle Device Motion events (accelerometer and gyroscope)
+function handleMotion(event) {
+    if (!isOrientationActive || !edgeMLCollector) return;
+    
+    const timestamp = Date.now();
+    
+    try {
+        // Accelerometer data (linear acceleration without gravity)
+        if (event.acceleration) {
+            accelerometerData.x = event.acceleration.x || 0;
+            accelerometerData.y = event.acceleration.y || 0;
+            accelerometerData.z = event.acceleration.z || 0;
+            
+            edgeMLCollector.addDataPoint(timestamp, 'accel_x', accelerometerData.x);
+            edgeMLCollector.addDataPoint(timestamp, 'accel_y', accelerometerData.y);
+            edgeMLCollector.addDataPoint(timestamp, 'accel_z', accelerometerData.z);
+        }
+        
+        // Gyroscope data (rotation rate)
+        if (event.rotationRate) {
+            gyroscopeData.x = event.rotationRate.alpha || 0;
+            gyroscopeData.y = event.rotationRate.beta || 0;
+            gyroscopeData.z = event.rotationRate.gamma || 0;
+            
+            edgeMLCollector.addDataPoint(timestamp, 'gyro_x', gyroscopeData.x);
+            edgeMLCollector.addDataPoint(timestamp, 'gyro_y', gyroscopeData.y);
+            edgeMLCollector.addDataPoint(timestamp, 'gyro_z', gyroscopeData.z);
+        }
+    } catch (error) {
+        console.error('Error sending motion data to EdgeML:', error);
     }
 }
 
@@ -140,7 +181,7 @@ async function startOrientationTracking() {
                 throw new Error('EdgeML.datasetCollector function not found. Library may be outdated.');
             }
             
-            console.log('✓ EdgeML library loaded successfully');
+            console.log('EdgeML library loaded successfully');
             
             // ========================================
             // Initialize EdgeML Data Collector
@@ -150,15 +191,28 @@ async function startOrientationTracking() {
             const contextValue = contextInput.value || 'no-context';
             const datasetName = `orientation_${contextValue}_${Date.now()}`;
             
-            console.log('📡 Connecting to EdgeML...');
+            console.log('Connecting to EdgeML...');
             console.log('Configuration:', {
                 backendUrl: EDGEML_CONFIG.backendUrl,
                 apiKeyLength: EDGEML_CONFIG.deviceApiKey.length,
                 datasetName: datasetName,
-                timeSeries: ['alpha', 'beta', 'gamma']
+                sensors: ['orientation', 'accelerometer', 'gyroscope']
             });
             
-            // Create the data collector
+            // Request permission for motion sensors on iOS 13+
+            if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                try {
+                    const permission = await DeviceMotionEvent.requestPermission();
+                    if (permission !== 'granted') {
+                        alert('Permission to access motion sensors was denied');
+                        return;
+                    }
+                } catch (permError) {
+                    console.error('Error requesting motion permission:', permError);
+                }
+            }
+            
+            // Create the data collector with all sensor channels
             // Parameters:
             // 1. Backend URL
             // 2. API Key (write key)
@@ -171,19 +225,21 @@ async function startOrientationTracking() {
                 EDGEML_CONFIG.deviceApiKey,
                 datasetName,
                 false,  // We'll provide our own timestamps
-                ['alpha', 'beta', 'gamma'],  // Time-series (sensor names)
+                ['alpha', 'beta', 'gamma', 'accel_x', 'accel_y', 'accel_z', 'gyro_x', 'gyro_y', 'gyro_z'],
                 {
                     context: contextValue,
-                    device: 'web-browser',
-                    startTime: new Date().toISOString()
+                    device: navigator.userAgent,
+                    startTime: new Date().toISOString(),
+                    sensors: 'orientation, accelerometer, gyroscope'
                 }  // Metadata
             );
             
-            console.log('✓ Connected to EdgeML!');
-            console.log('📊 Dataset name:', datasetName);
+            console.log('Connected to EdgeML');
+            console.log('Dataset name:', datasetName);
+            dataPointCounter = 0;
             
         } catch (error) {
-            console.error('✗ Failed to connect to EdgeML:', error);
+            console.error('Failed to connect to EdgeML:', error);
             console.error('Error details:', {
                 message: error.message,
                 stack: error.stack,
@@ -193,28 +249,30 @@ async function startOrientationTracking() {
             alert('Failed to connect to EdgeML. Check console for details.\n\nError: ' + error.message);
         }
         
-        // Add the event listener for device orientation
+        // Add event listeners for all sensors
         window.addEventListener('deviceorientation', handleOrientation);
+        window.addEventListener('devicemotion', handleMotion);
         isOrientationActive = true;
         
         // Update status
-        orientationStatus.textContent = 'Active ✓ (EdgeML Connected)';
+        orientationStatus.textContent = 'Active (EdgeML Connected)';
         orientationStatus.className = 'active';
         
-        console.log('✓ Device orientation tracking started');
+        console.log('Sensor tracking started - collecting orientation, accelerometer, gyroscope data');
     } else {
         // Browser doesn't support this feature
         orientationStatus.textContent = 'Not supported by browser';
         orientationStatus.className = 'error';
         
-        console.error('✗ DeviceOrientationEvent not supported');
+        console.error('DeviceOrientationEvent not supported');
     }
 }
 
-// Function to stop listening to device orientation
+// Function to stop listening to device sensors
 async function stopOrientationTracking() {
-    // Remove the event listener
+    // Remove all event listeners
     window.removeEventListener('deviceorientation', handleOrientation);
+    window.removeEventListener('devicemotion', handleMotion);
     isOrientationActive = false;
     
     // ========================================
@@ -222,18 +280,19 @@ async function stopOrientationTracking() {
     // ========================================
     if (edgeMLCollector) {
         try {
-            console.log('📡 Uploading remaining data to EdgeML...');
+            console.log('Uploading remaining data to EdgeML...');
+            console.log('Total data points collected: ' + dataPointCounter);
             
             // Tell EdgeML we're done - this uploads all buffered data
             await edgeMLCollector.onComplete();
             
-            console.log('✓ All data uploaded to EdgeML successfully!');
-            console.log('🔗 View your data at: ' + EDGEML_CONFIG.backendUrl);
+            console.log('All data uploaded to EdgeML successfully');
+            console.log('View your data at: ' + EDGEML_CONFIG.backendUrl);
             
             // Clear the collector
             edgeMLCollector = null;
         } catch (error) {
-            console.error('✗ Error completing EdgeML upload:', error);
+            console.error('Error completing EdgeML upload:', error);
         }
     }
     
@@ -246,7 +305,7 @@ async function stopOrientationTracking() {
     orientationStatus.textContent = 'Stopped (Data uploaded)';
     orientationStatus.className = '';
     
-    console.log('✓ Device orientation tracking stopped');
+    console.log('Sensor tracking stopped');
 }
 
 // Add event listener to toggle switch for orientation control
