@@ -6,6 +6,10 @@ package-lock.json
 .env
 .env.local
 
+# Sensitive configuration files
+task1/config.js
+task2/.env
+
 # OS files
 .DS_Store
 Thumbs.db

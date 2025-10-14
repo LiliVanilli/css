@@ -66,13 +66,8 @@ let collectionStartTime = null;
 let currentContext = '';
 let storageMode = 'local';  // 'local' or 'edgeml'
 
-// EdgeML connection settings
-const EDGEML_CONFIG = {
-    backendUrl: 'https://app.edge-ml.org',
-    deviceApiKey: '5fe6e50c3fb5001531bbd8e03a8c591f',
-    username: 'css25',
-    password: 'css25'
-};
+// EdgeML connection settings are loaded from config.js
+// See config.example.js for template
 
 let edgeMLCollector = null;
 
