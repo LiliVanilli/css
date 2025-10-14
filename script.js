@@ -118,6 +118,19 @@ async function startOrientationTracking() {
     if (window.DeviceOrientationEvent) {
         try {
             // ========================================
+            // Check if EdgeML library is loaded
+            // ========================================
+            if (typeof edgeML === 'undefined') {
+                throw new Error('EdgeML library not loaded. Check if CDN is accessible.');
+            }
+            
+            if (typeof edgeML.datasetCollector === 'undefined') {
+                throw new Error('EdgeML.datasetCollector function not found. Library may be outdated.');
+            }
+            
+            console.log('✓ EdgeML library loaded successfully');
+            
+            // ========================================
             // Initialize EdgeML Data Collector
             // ========================================
             
@@ -126,6 +139,12 @@ async function startOrientationTracking() {
             const datasetName = `orientation_${contextValue}_${Date.now()}`;
             
             console.log('📡 Connecting to EdgeML...');
+            console.log('Configuration:', {
+                backendUrl: EDGEML_CONFIG.backendUrl,
+                apiKeyLength: EDGEML_CONFIG.deviceApiKey.length,
+                datasetName: datasetName,
+                timeSeries: ['alpha', 'beta', 'gamma']
+            });
             
             // Create the data collector
             // Parameters:
@@ -153,7 +172,13 @@ async function startOrientationTracking() {
             
         } catch (error) {
             console.error('✗ Failed to connect to EdgeML:', error);
-            alert('Failed to connect to EdgeML. Check console for details.');
+            console.error('Error details:', {
+                message: error.message,
+                stack: error.stack,
+                name: error.name,
+                fullError: error
+            });
+            alert('Failed to connect to EdgeML. Check console for details.\n\nError: ' + error.message);
         }
         
         // Add the event listener for device orientation
