@@ -1,0 +1,76 @@
+ <!-- Purpose: Defines the structure of your webpage -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form with Toggle Switch</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>My Form</h1>
+        <form id="myForm">
+            <!-- Text Field for Context -->
+            <div class="form-group">
+                <label for="context">Context:</label>
+                <input type="text" id="context" name="context" placeholder="Enter context here...">
+            </div>
+
+            <!-- Storage Mode Selection -->
+            <div class="form-group">
+                <label for="storageMode">Data Storage:</label>
+                <select id="storageMode" name="storageMode">
+                    <option value="local">Local Storage (CSV Export)</option>
+                    <option value="edgeml">EdgeML Cloud</option>
+                </select>
+            </div>
+
+            <!-- Toggle Switch -->
+            <div class="form-group">
+                <label for="toggleSwitch">Toggle Option:</label>
+                <label class="switch">
+                    <input type="checkbox" id="toggleSwitch" name="toggleSwitch">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit">Submit</button>
+            
+            <!-- Export Button (only visible when data is collected) -->
+            <button type="button" id="exportBtn" style="display: none; background: #2196F3; margin-left: 10px;">Export CSV</button>
+            <button type="button" id="clearBtn" style="display: none; background: #f44336; margin-left: 10px;">Clear Data</button>
+        </form>
+
+        <!-- Display Area for Form Data -->
+        <div id="output" class="output"></div>
+
+        <!-- Display Area for Device Orientation -->
+        <div id="orientation-output" class="orientation-output">
+            <h3>📱 Device Sensors</h3>
+            <p class="status">Status: <span id="orientation-status">Toggle ON to start</span></p>
+            <p class="status">Storage Mode: <span id="storage-mode-display">Local Storage</span></p>
+            <p class="status">Data Points: <span id="data-count">0</span></p>
+            <div class="orientation-data">
+                <p><strong>Orientation:</strong></p>
+                <p>Alpha (Z-axis): <span id="alpha">--</span>°</p>
+                <p>Beta (X-axis): <span id="beta">--</span>°</p>
+                <p>Gamma (Y-axis): <span id="gamma">--</span>°</p>
+                <p><strong>Accelerometer:</strong></p>
+                <p>X: <span id="accel-x">--</span> m/s²</p>
+                <p>Y: <span id="accel-y">--</span> m/s²</p>
+                <p>Z: <span id="accel-z">--</span> m/s²</p>
+                <p><strong>Gyroscope:</strong></p>
+                <p>X: <span id="gyro-x">--</span> °/s</p>
+                <p>Y: <span id="gyro-y">--</span> °/s</p>
+                <p>Z: <span id="gyro-z">--</span> °/s</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load EdgeML library BEFORE our script (using local copy for reliability) -->
+    <script src="edge-ml.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

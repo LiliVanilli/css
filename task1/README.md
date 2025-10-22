@@ -109,7 +109,6 @@ css/
 ├── analyze_sensors.py      # Python data analysis script
 ├── test_data.csv          # Sample sensor data for testing
 ├── requirements.txt        # Python dependencies
-├── ANALYSIS.md            # Data analysis documentation
 ├── package.json           # NPM dependencies and project info
 ├── package-lock.json      # Locked versions of dependencies
 ├── node_modules/          # Installed NPM packages (auto-generated)
