@@ -59,14 +59,14 @@ http-server
 ```
 
 **Option C: Live on GitHub Pages**
-Visit: https://lilivanilli.github.io/css/
+Visit: https://lilivanilli.github.io/css/task1/
 
 
 ## How to Use
 
 ### Web Interface
 
-1. **Open the webpage** at https://lilivanilli.github.io/css/
+1. **Open the webpage** at https://lilivanilli.github.io/css/task1/
 2. **Select storage mode**: Choose between "Local Storage" or "EdgeML Cloud"
 3. **Enter context** in the text field (e.g., "walking", "sitting", "running")
 4. **Toggle the switch ON** to start sensor data collection
@@ -81,7 +81,7 @@ Visit: https://lilivanilli.github.io/css/
 ### Mobile Testing
 
 For detailed sensor debugging on mobile devices, visit:
-https://lilivanilli.github.io/css/mobile-debug.html
+https://lilivanilli.github.io/css/task1/mobile-debug.html
 
 This page provides:
 - Sensor API support detection
@@ -118,7 +118,7 @@ css/
 ## HTTPS Deployment
 
 This project is deployed on GitHub Pages with automatic HTTPS:
-- URL: https://lilivanilli.github.io/css/
+- URL: https://lilivanilli.github.io/css/task1/
 - Certificate: Automatically provided by GitHub (Let's Encrypt)
 
 ## Technologies Used
