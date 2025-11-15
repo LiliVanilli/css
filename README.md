@@ -27,7 +27,7 @@ cd task1  # or task2, task3, task4
 ### Task 1: Sensor Data Collection
 - **Goal**: Build web app to collect device sensor data
 - **Tech**: HTML5, JavaScript, Device APIs, EdgeML
-- **Live Demo**: https://lilivanilli.github.io/css/
+- **Live Demo**: https://lilivanilli.github.io/css/task1/
 - **Features**: Real-time sensor display, CSV export, mobile support
 
 ### Task 2: Feature Extraction
